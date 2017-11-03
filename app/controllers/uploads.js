@@ -1,4 +1,6 @@
 'use strict'
+const multer = require('multer')
+const multerUpload = multer({ dest: '/tmp' })
 
 const controller = require('lib/wiring/controller')
 const models = require('app/models')
@@ -24,6 +26,10 @@ const show = (req, res) => {
 }
 
 const create = (req, res, next) => {
+  multerUpload.single('image[file]')
+  console.log('are you taking crazy pills?')
+  console.log('req.body is', req.body)
+  console.log('req.file is', req.file)
   // const upload = Object.assign(req.body.upload, {
   //   _owner: req.user._id
   // })
@@ -40,7 +46,7 @@ const create = (req, res, next) => {
 //           upload: upload.toJSON({ virtuals: true, user: req.user })
 //         }))
 //     .catch(next)
-// }
+}
 
 const update = (req, res, next) => {
   delete req.body.upload._owner  // disallow owner reassignment.
@@ -64,7 +70,8 @@ module.exports = controller({
   destroy
 }, { before: [
   { method: setUser, only: ['index', 'show'] },
-  { method: authenticate, except: ['index', 'show'] },
+  {method: multerUpload.single('image[file]'), only: ['create']},
+  { method: authenticate, except: ['index', 'show', 'create'] },
   { method: setModel(Upload), only: ['show'] },
   { method: setModel(Upload, { forUser: true }), only: ['update', 'destroy'] }
 ] })
