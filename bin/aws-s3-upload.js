@@ -15,7 +15,7 @@ s3Upload(file)
     console.log('location is ?', s3Response)
     return Upload.create({
       description: 'does this work?',
-      url: 'what is the url?'
+      url: s3Response.Location
     })
   })
   // .then(console.log) thise is the same as the line below
